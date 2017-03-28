@@ -1,6 +1,8 @@
 .DS_Store
 data
 parsed_data
+client_secret.json
+node_modules/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

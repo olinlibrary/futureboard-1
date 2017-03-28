@@ -43,7 +43,7 @@ def get_email_model(email_json):
 def add_emails():
     for email_chunk in os.listdir(os.path.join(os.path.dirname(__file__), 'parsed_data/')):
         emails = [get_email_model(email) for email in read_emails(email_chunk)]
-        print EMAIL_COLLECTION.insert_many(emails).inserted_ids
+        print(EMAIL_COLLECTION.insert_many(emails).inserted_ids) 
 
 
 def reset_db():
