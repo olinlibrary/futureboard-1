@@ -1,11 +1,11 @@
-import httplib2, os, base64
+import httplib2, os, base64, re
 
 from apiclient import discovery
 from oauth2client import client
 from oauth2client import tools
 from oauth2client.file import Storage
 from pprint import PrettyPrinter
-
+from wrangle import update_jsons
 pp = PrettyPrinter()
 
 try:
@@ -50,39 +50,51 @@ def get_credentials():
 	return credentials
 
 def main():
-	"""Shows basic usage of the Gmail API.
+	"""Connects to gmail account and pulls out all new emails to the carpe list, then separates them
+		by month and sends them in batches to be stored in a JSON"""
 
-	Creates a Gmail API service object and outputs a list of label names
-	of the user's Gmail account.
-	"""
 	credentials = get_credentials()
 	http = credentials.authorize(httplib2.Http())
 	service = discovery.build('gmail', 'v1', http=http)
 
 	results = service.users().messages().list(userId='me', q="to:carpediem@lists.olin.edu").execute()
-	# pp.pprint(results)
+	emails = {}
 	for msg_id in results['messages']:
 		message = service.users().messages().get(userId='me', id=msg_id['id']).execute()
-		date = next(meta for meta in message['payload']['headers'] if meta['name']=="Date")['value']
-		subject = next(meta for meta in message['payload']['headers'] if meta['name']=="Subject")['value']
-		print(date)
-		print(subject)
+		
+		email_content = {}
 
+		email_content["id"] = message.get('id', False)
+		meta_dict = {meta["name"].lower(): meta["value"] for meta in message["payload"]["headers"] if meta["name"] in ["Subject", "Date", "From"]}
+		email_content["subject"] = meta_dict.get("subject", False)
+		email_content["date"] = meta_dict.get("date", False)
 
-		# if "parts" not in message["payload"].keys():
-		# 	subject = next(meta["value"] for meta in message["payload"]["headers"] if meta['name'] == "Subject")
-		# 	print(subject)
-		# 	# str(base64.b64decode(
-		# else:
-		# 	print("Message contains HTML elements")
-	# labels = results.get('messages', [])
+		#From format is 'John Doe <johny_appleseed@gmail.com>'
+		name = re.findall(re.compile('[a-zA-Z]{1,} [a-zA-Z]{1,}'), meta_dict.get("from", ""))
+		email = re.findall(re.compile('<.*>'), meta_dict.get("from", "")) 
+		email_content["author_name"] = name[0] if name else False
+		email_content["author_email"] = email[0].lstrip("<").rstrip(">") if email else False
 
-	# if not labels:
-	#     print('No labels found.')
-	# else:
-	#   print('Labels:')
-	#   for label in labels:
-	#     print(label['name'])
+		email_content["replying_to"] = False
+		
+		try:
+			body = message['payload']['parts'][0]['parts'][0]['body']['data'].rstrip("=") + "=="
+		except KeyError:
+			body = message['payload']['body']['data'].rstrip("=") + "=="
+		email_content['text'] = base64.b64decode(body).decode(errors="ignore")		#Having unicode errors
+
+		month = re.findall(re.compile("[A-Z]{1}[a-z]{2} [0-9]{4}"), meta_dict.get("date", ''))
+		month = month[0]
+		try:
+			emails[month].append(email_content)
+		except KeyError:
+			emails[month] = [email_content]
+
+	if not emails:
+		print("No new emails!")
+	else:
+		for date, lst_emails in emails.items():
+			update_jsons(lst_emails, date)
 
 
 if __name__ == '__main__':

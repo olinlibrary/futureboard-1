@@ -75,10 +75,28 @@ def parse(fname):
         clean_messages.append(data)
     return clean_messages
 
+def update_jsons(emails, date):
+    """ Takes in emails in the form of a list of dictionaries, each with the format
+        {
+            "id":           id assigned by carpediem mail server,
+            "text":         raw email text (includes newlines, etc.),
+            "subject":      email subject,
+            "date":         send date,
+            "author_name":  sender name,
+            "author_email": sender email,
+            "replying_to":  if a reply, the ID of the email being replied to
+        }
+        Then finds the correct JSON to put them in and updates that JSON """
+    print("-".join(date.split()))
+    with open(os.path.join(os.path.dirname(__file__), "parsed_data/", "-".join(date.split()) + ".json"), "w") as file:
+        json.dump(emails, file)
+    
+
 
 if __name__ == "__main__":
 
     for email_dump in os.listdir(DATA_DIR):
+        print(email_dump)
         emails = []
         emails += parse(email_dump)
 
