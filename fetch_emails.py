@@ -59,14 +59,14 @@ def main():
 	http = credentials.authorize(httplib2.Http())
 	service = discovery.build('gmail', 'v1', http=http)
 
-	results = service.users().messages().list(userId='me').execute()
+	results = service.users().messages().list(userId='me', q="to:carpediem@lists.olin.edu").execute()
 	# pp.pprint(results)
 	for msg_id in results['messages']:
 		message = service.users().messages().get(userId='me', id=msg_id['id']).execute()
-		try:
-			pp.pprint(message["payload"]['parts'])
-		except:
-			pass
+		date = next(meta for meta in message['payload']['headers'] if meta['name']=="Date")['value']
+		subject = next(meta for meta in message['payload']['headers'] if meta['name']=="Subject")['value']
+		print(date)
+		print(subject)
 
 
 		# if "parts" not in message["payload"].keys():
