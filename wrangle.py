@@ -6,8 +6,10 @@ Aidan McLaughlin - Jan 21, 2017
 import re
 import os
 import json
+from models import add_emails
 DATA_DIR = os.path.join(os.path.dirname(__file__), 'data/')
-
+month_map = {"Jan": "january", "Feb": "february", "Mar": "march", "Apr": "april", "May": "may", "Jun": "june", "Jul": "july", "Aug": "august",
+ "Sep": "september", "Oct": "october", "Nov": "november", "Dec": "december"}
 
 def parse(fname):
     """
@@ -87,10 +89,12 @@ def update_jsons(emails, date):
             "replying_to":  if a reply, the ID of the email being replied to
         }
         Then finds the correct JSON to put them in and updates that JSON """
-    print("-".join(date.split()))
-    with open(os.path.join(os.path.dirname(__file__), "parsed_data/", "-".join(date.split()) + ".json"), "w") as file:
+    date = date.split()
+    date[0] = month_map[date[0]]
+    date = "-".join(date)
+    with open(os.path.join(os.path.dirname(__file__), "parsed_data/", date + ".json"), "a") as file:
         json.dump(emails, file)
-    
+    add_emails(date)
 
 
 if __name__ == "__main__":
