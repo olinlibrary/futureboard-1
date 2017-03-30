@@ -82,5 +82,5 @@ if __name__ == "__main__":
         emails = []
         emails += parse(email_dump)
 
-        with open("parsed_data/" + email_dump.split('.')[0] + ".json", "w") as clean:
+        with open(os.path.join(os.path.dirname(__file__), "parsed_data/", email_dump.split('.')[0] + ".json"), "w") as clean:
             json.dump(emails, clean)
