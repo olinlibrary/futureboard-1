@@ -1,5 +1,8 @@
+body, html {
+	background-image: url('/static/images/cork-texture.jpg');
+}
+
 .top {
-	background-image: url('/static/images/blue-lines.png');
 	background-repeat: repeat;
     padding: 10px 0px;
     margin-bottom: 30px;
@@ -51,9 +54,11 @@ ul.options {
 		list-style: none;
 		width: 128px;
 		height: 165px;
-		border: 2px solid #333;
+		// border: 2px solid #333;
 		padding: 10px;
 		background: white;
+		overflow: hidden;
+		box-shadow: 0px 1px 5px rgba(0,0,0,0.5);
 	}
 
 	#results ul .subject {
@@ -65,3 +70,8 @@ ul.options {
 			cursor: pointer;
 			color: #0087c6;
 		}
+
+#single {
+	background-color: rgba(0,0,0,0.4);
+	color: white;
+}

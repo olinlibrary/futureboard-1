@@ -80,6 +80,24 @@ def filter_emails():
     return json.dumps([email for email in emails], default=json_util.default)
 
 
+@app.route('/random-email')
+def random_email():
+    most_recent_email = EMAIL_COLLECTION.aggregate([{
+        "$group": {"_id": "date", "date": {"$max": "$date"}}
+    }]).next()
+    earliest_email = EMAIL_COLLECTION.aggregate([{
+        "$group": {"_id": "date", "date": {"$min": "$date"}}
+    }]).next()
+    random_email = EMAIL_COLLECTION.aggregate([{"$sample": {"size": 1}}]).next()
+    data = {
+        "email": random_email,
+        "max_date": most_recent_email["date"],
+        "min_date": earliest_email["date"]
+    }
+    print data["max_date"], data["min_date"]
+    return json.dumps(data, default=json_util.default)
+
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     host = "127.0.0.1" if port == 5000 else "0.0.0.0"
