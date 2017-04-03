@@ -1,9 +1,5 @@
- sphinx
- sphinx-autobuild
- sphinx_rtd_theme
- recommonmark
-=======
 alabaster==0.7.10
+apiclient==1.0.3
 appdirs==1.4.0
 argh==0.26.2
 Babel==2.4.0
@@ -11,32 +7,48 @@ backports-abc==0.5
 certifi==2017.1.23
 click==6.7
 CommonMark==0.5.4
+discovery==0.0.4
 docutils==0.13.1
 Flask==0.12
 Flask-SQLAlchemy==2.1
+funcsigs==1.0.2
+google-api-python-client==1.6.2
+httplib2==0.10.3
 imagesize==0.7.1
 itsdangerous==0.24
 Jinja2==2.9.5
 livereload==2.5.1
 MarkupSafe==0.23
+mock==2.0.0
+numpy==1.12.1
+oauth2client==4.0.0
 packaging==16.8
 pathtools==0.1.2
+pbr==2.0.0
 port-for==0.3.1
 psycopg2==2.6.2
+pyasn1==0.2.3
+pyasn1-modules==0.0.8
 Pygments==2.2.0
 pymongo==3.4.0
 pyparsing==2.1.10
 pytz==2016.10
 PyYAML==3.12
 recommonmark==0.4.0
-requests==2.13.0
+requests==2.5.0
+rsa==3.4.2
+scikit-learn==0.18.1
+scipy==0.19.0
 singledispatch==3.4.0.3
 six==1.10.0
+sklearn==0.0
 snowballstemmer==1.2.1
 Sphinx==1.5.3
 sphinx-autobuild==0.6.0
 sphinx-rtd-theme==0.2.4
 SQLAlchemy==1.1.5
 tornado==4.4.2
+uritemplate==3.0.0
+urllib3==1.20
 watchdog==0.8.3
 Werkzeug==0.11.15
