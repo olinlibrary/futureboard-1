@@ -62,16 +62,48 @@ def main():
     results = service.users().messages().list(userId='me').execute()
     # pp.pprint(results)
     for msg_id in results['messages']:
-    	message = service.users().messages().get(userId='me', id=msg_id['id'], format="raw").execute()
-    	pp.pprint((message["raw"]))
-    # labels = results.get('messages', [])
+        message = service.users().messages().get(userId='me', id=msg_id['id']).execute()
 
-    # if not labels:
-    #     print('No labels found.')
-    # else:
-    #   print('Labels:')
-    #   for label in labels:
-    #     print(label['name'])
+        email_content = {}
+
+        email_content["id"] = message.get('id', False)
+        meta_dict = {meta["name"].lower(): meta["value"] for meta in message["payload"]["headers"] if meta["name"] in ["Subject", "Date", "From"]}
+        email_content["subject"] = meta_dict.get("subject", False)
+        email_content["date"] = meta_dict.get("date", False)
+
+        # From format is 'John Doe <johny_appleseed@gmail.com>'
+        name = re.findall(re.compile('[a-zA-Z]{1,} [a-zA-Z]{1,}'), meta_dict.get("from", ""))
+        email = re.findall(re.compile('<.*>'), meta_dict.get("from", "")) 
+        email_content["author_name"] = name[0] if name else False
+        email_content["author_email"] = email[0].lstrip("<").rstrip(">") if email else False
+
+        email_content["replying_to"] = False
+
+        try:
+            body = message['payload']['parts'][0]['parts'][0]['body']['data'].rstrip("=") + "=="
+        except KeyError:
+            if message['payload']['body']['size'] > 0:
+                body = message['payload']['body']['data'].rstrip("=") + "=="
+            else:
+                body = ""
+
+        try:
+            email_content['text'] = base64.b64decode(body).decode(errors="ignore")      # Having unicode errors
+        except TypeError:
+            print "that's fine"
+
+        month = re.findall(re.compile("[A-Z]{1}[a-z]{2} [0-9]{4}"), meta_dict.get("date", ''))
+        month = month[0]
+        try:
+            emails[month].append(email_content)
+        except KeyError:
+            emails[month] = [email_content]
+
+    if not emails:
+        print("No new emails!")
+    else:
+        for date, lst_emails in emails.items():
+            update_jsons(lst_emails, date)
 
 
 if __name__ == '__main__':
