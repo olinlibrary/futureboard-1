@@ -1,4 +1,4 @@
-import httplib2, os, base64
+import httplib2, os, base64, re
 
 from apiclient import discovery
 from oauth2client import client
@@ -90,7 +90,7 @@ def main():
         try:
             email_content['text'] = base64.b64decode(body).decode(errors="ignore")      # Having unicode errors
         except TypeError:
-            print "that's fine"
+            print("that's fine")
 
         month = re.findall(re.compile("[A-Z]{1}[a-z]{2} [0-9]{4}"), meta_dict.get("date", ''))
         month = month[0]
