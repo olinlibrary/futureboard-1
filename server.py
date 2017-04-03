@@ -40,7 +40,7 @@ def gmail_to_mongo(email_data):
         "author_name": email_data["author_name"],
         "replying_to": email_data["replying_to"]
     }
-    EMAIL_COLLECTION.insert_one(data)
+    return data
 
 
 app = create_app()
