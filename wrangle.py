@@ -92,7 +92,7 @@ def update_jsons(emails, date):
     date = date.split()
     date[0] = month_map[date[0]]
     date = "-".join(date)
-    with open(os.path.join(os.path.dirname(__file__), "parsed_data/", date + ".json"), "a") as file:
+    with open(os.path.join(os.path.dirname(__file__), "parsed_data/", date + ".json"), "w") as file:
         json.dump(emails, file)
     add_emails(date)
 

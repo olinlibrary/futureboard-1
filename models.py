@@ -43,7 +43,7 @@ def get_email_model(email_json):
 def add_emails(date=None):
     """Adds emails from parsed_data directory to the database. If no date is specified, it will add every month. """
     if date:
-        emails = [get_email_model(email) for email in read_emails(os.path.join(os.path.dirname(__file__), 'parsed_data/'+date))]
+        emails = [get_email_model(email) for email in read_emails(os.path.join(os.path.dirname(__file__), 'parsed_data/'+date+".json"))]
         print(EMAIL_COLLECTION.insert_many(emails).inserted_ids)
     else:
         for email_chunk in os.listdir(os.path.join(os.path.dirname(__file__), 'parsed_data/')):

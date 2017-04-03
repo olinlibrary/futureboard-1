@@ -16,7 +16,7 @@ except ImportError:
 
 # If modifying these scopes, delete your previously saved credentials
 # at ~/.credentials/gmail-python-quickstart.json
-SCOPES = 'https://www.googleapis.com/auth/gmail.readonly'
+SCOPES = 'https://www.googleapis.com/auth/gmail.modify'
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Gmail API Python Quickstart'
 
@@ -57,10 +57,14 @@ def main():
 	http = credentials.authorize(httplib2.Http())
 	service = discovery.build('gmail', 'v1', http=http)
 
-	results = service.users().messages().list(userId='me', q="to:carpediem@lists.olin.edu").execute()
+	email_stored = "Label_1"
+	results = service.users().messages().list(userId='me', q="to:carpediem@lists.olin.edu NOT label:{}".format(email_stored)).execute()
+
 	emails = {}
+	response = service.users().labels().list(userId='me').execute()
 	for msg_id in results['messages']:
 		message = service.users().messages().get(userId='me', id=msg_id['id']).execute()
+		service.users().messages().modify(userId="me", id=msg_id['id'], body={'removeLabelIds':[], 'addLabelIds':[email_stored]}).execute()
 		
 		email_content = {}
 
@@ -76,7 +80,7 @@ def main():
 		email_content["author_email"] = email[0].lstrip("<").rstrip(">") if email else False
 
 		email_content["replying_to"] = False
-		
+		pp.pprint(message['payload'])
 		try:
 			body = message['payload']['parts'][0]['parts'][0]['body']['data'].rstrip("=") + "=="
 		except KeyError:
