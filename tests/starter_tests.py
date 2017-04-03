@@ -2,6 +2,7 @@
 import unittest
 
 from server import app
+from fetch_emails import get_credentials
 
 
 def add(a, b):
