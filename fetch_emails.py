@@ -77,11 +77,15 @@ def parse_email(message):
     
     try:
         try:
-            body = message['payload']['parts'][0]['parts'][0]['body']['data']
+            try:
+                body = message['payload']['parts'][0]['parts'][0]['body']['data']
+            except KeyError:
+                body = message['payload']['body']['data']
         except KeyError:
-            body = message['payload']['body']['data']
-    except KeyError:
-        body = message['payload']['parts'][0]['parts'][0]['parts'][0]['body']['data']
+            body = message['payload']['parts'][0]['parts'][0]['parts'][0]['body']['data']
+    except:
+        body = ""
+        print("Email "+email_content['id']+": "+email_content['subject']+" message body not found")
     
     missing_padding = len(body) % 4
     if missing_padding != 0:
@@ -97,19 +101,12 @@ def parse_email(message):
     # print(' ')
     return email_content
 
+def retrieve_emails(service, next_page=None):
 
-def main():
-    """Connects to gmail account and pulls out all new emails to the carpe list, then separates them
-        by month and sends them in batches to be stored in a JSON"""
+    results = service.users().messages().list(userId='me', q="to:carpediem@lists.olin.edu NOT label:email_stored", pageToken=next_page).execute()
 
-    credentials = get_credentials()
-    http = credentials.authorize(httplib2.Http())
-    service = discovery.build('gmail', 'v1', http=http)
-
-    email_stored = "Label_1"
-    results = service.users().messages().list(userId='me', q="to:carpediem@lists.olin.edu".format(email_stored)).execute()
-    print(results)
     emails = {}
+    email_stored = 'Label_1'
     if results['resultSizeEstimate']:
         for result in results['messages']:
             msg_id = result['id']
@@ -127,7 +124,21 @@ def main():
         for date, lst_emails in emails.items():
             update_jsons(lst_emails, date)
     else:
-        print("No new emails!")        
+        print("No new emails!")
+
+    if results.get('nextPageToken', None):
+        retrieve_emails(service, results['nextPageToken'])
+
+def main():
+    """Connects to gmail account and pulls out all new emails to the carpe list, then separates them
+        by month and sends them in batches to be stored in a JSON"""
+
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())
+    service = discovery.build('gmail', 'v1', http=http)
+
+    retrieve_emails(service)
+           
 
 if __name__ == '__main__':
     main()

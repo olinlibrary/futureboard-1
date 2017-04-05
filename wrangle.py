@@ -6,7 +6,7 @@ Aidan McLaughlin - Jan 21, 2017
 import re
 import os
 import json
-from models import add_emails
+from models import reset_db
 DATA_DIR = os.path.join(os.path.dirname(__file__), 'data/')
 month_map = {"Jan": "january", "Feb": "february", "Mar": "march", "Apr": "april", "May": "may", "Jun": "june", "Jul": "july", "Aug": "august",
  "Sep": "september", "Oct": "october", "Nov": "november", "Dec": "december"}
@@ -75,6 +75,7 @@ def parse(fname):
         data["text"] = email_body
 
         clean_messages.append(data)
+
     return clean_messages
 
 def update_jsons(emails, date):
@@ -91,10 +92,17 @@ def update_jsons(emails, date):
         Then finds the correct JSON to put them in and updates that JSON """
     date = date.split()
     date[0] = month_map[date[0]]
-    date = "-".join(date)
-    with open(os.path.join(os.path.dirname(__file__), "parsed_data/", date + ".json"), "w") as file:
+    date_formatted = "-".join(date)
+    try:
+        with open(os.path.join(os.path.dirname(__file__), "parsed_data/", date_formatted + ".json")) as file:
+            emails+= json.load(file)
+            file.close()
+    except FileNotFoundError:
+        pass
+    with open(os.path.join(os.path.dirname(__file__), "parsed_data/", date_formatted + ".json"), 'w') as file:
         json.dump(emails, file)
-    add_emails(date)
+        file.close()
+    reset_db()      #Should change this to add_emails; just need to figure out how to selectively reset the database
 
 
 if __name__ == "__main__":
