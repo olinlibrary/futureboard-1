@@ -93,7 +93,7 @@ def parse_email(message):
 
     try:
         email_content['text'] = base64.b64decode(body).decode(errors="ignore")      # Having unicode errors
-    except Error:
+    except TypeError:
         email_content['text'] = "Corrupted Data"
         print("Email "+email_content['id']+": "+email_content['subject']+" is corrupted")
     # print(email_content['subject'])
@@ -116,11 +116,9 @@ def retrieve_emails(service, next_page=None):
             email_content = parse_email(message)
 
             month = re.findall(re.compile("[A-Z]{1}[a-z]{2} [0-9]{4}"), email_content.get("date", ''))[0]
-            
-            try:
-                emails[month].append(email_content)
-            except KeyError:
-                emails[month] = [email_content]
+
+            emails.setdefault(month, [])
+            emails[month].append(email_content)
         for date, lst_emails in emails.items():
             update_jsons(lst_emails, date)
     else:
