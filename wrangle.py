@@ -93,16 +93,12 @@ def update_jsons(emails, date):
     date = date.split()
     date[0] = month_map[date[0]]
     date_formatted = "-".join(date)
-    try:
+    if date_formatted + ".json" in os.listdir(os.path.join(os.path.dirname(__file__), "parsed_data/")):
         with open(os.path.join(os.path.dirname(__file__), "parsed_data/", date_formatted + ".json")) as file:
-            emails+= json.load(file)
-            file.close()
-    except FileNotFoundError:
-        pass
+            emails += json.load(file)
     with open(os.path.join(os.path.dirname(__file__), "parsed_data/", date_formatted + ".json"), 'w') as file:
         json.dump(emails, file)
-        file.close()
-    reset_db()      #Should change this to add_emails; just need to figure out how to selectively reset the database
+    reset_db()      # Should change this to add_emails; just need to figure out how to selectively reset the database
 
 
 if __name__ == "__main__":

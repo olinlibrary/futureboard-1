@@ -60,6 +60,7 @@ def get_credentials():
         credentials = request_live_credentials(store, credential_path)
     return credentials
 
+
 def parse_email(message):
     email_content = {}
 
@@ -74,7 +75,7 @@ def parse_email(message):
     email_content["author_name"] = name[0] if name else False
     email_content["author_email"] = email[0].lstrip("<").rstrip(">") if email else False
     email_content["replying_to"] = False
-    
+
     try:
         try:
             try:
@@ -86,21 +87,22 @@ def parse_email(message):
     except:
         body = ""
         print("Email "+email_content['id']+": "+email_content['subject']+" message body not found")
-    
+
     missing_padding = len(body) % 4
     if missing_padding != 0:
         body += str(b'='* (4 - missing_padding))
 
     try:
         email_content['text'] = base64.b64decode(body).decode(errors="ignore")      # Having unicode errors
-    except Error:
+    except TypeError:
         email_content['text'] = "Corrupted Data"
         print("Email "+email_content['id']+": "+email_content['subject']+" is corrupted")
     # print(email_content['subject'])
     # print(email_content['text'])
     # print(' ')
-    print(email_content['subject']+ "\n")
+    print(email_content['date']+ "\n")
     return email_content
+
 
 def retrieve_emails(service, next_page=None):
 
@@ -117,11 +119,10 @@ def retrieve_emails(service, next_page=None):
             email_content = parse_email(message)
 
             month = re.findall(re.compile("[A-Z]{1}[a-z]{2} [0-9]{4}"), email_content.get("date", ''))[0]
-            
-            try:
-                emails[month].append(email_content)
-            except KeyError:
-                emails[month] = [email_content]
+
+            emails.setdefault(month, [])
+            emails[month].append(email_content)
+
         for date, lst_emails in emails.items():
             update_jsons(lst_emails, date)
     else:
@@ -129,6 +130,7 @@ def retrieve_emails(service, next_page=None):
 
     if results.get('nextPageToken', None):
         retrieve_emails(service, results['nextPageToken'])
+
 
 def main():
     """Connects to gmail account and pulls out all new emails to the carpe list, then separates them
@@ -139,7 +141,7 @@ def main():
     service = discovery.build('gmail', 'v1', http=http)
 
     retrieve_emails(service)
-           
+
 
 if __name__ == '__main__':
     main()
