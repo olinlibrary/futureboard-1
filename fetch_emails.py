@@ -99,6 +99,7 @@ def parse_email(message):
     # print(email_content['subject'])
     # print(email_content['text'])
     # print(' ')
+    print(email_content['subject']+ "\n")
     return email_content
 
 def retrieve_emails(service, next_page=None):
