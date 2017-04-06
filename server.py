@@ -12,18 +12,25 @@ import re
 from datetime import datetime
 from bson import json_util
 
+from bs4 import BeautifulSoup
 from flask import Flask, redirect, render_template, request, url_for
 from jinja2 import evalcontextfilter, Markup, escape
+import requests as r
 from pymongo import MongoClient
+import parsedatetime as pdt
 
 from factory import create_app
 from models import get_date_format
 
 _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
 
+cal = pdt.Calendar()
+
 CLIENT = MongoClient('localhost', 27017)
 DB = CLIENT["carpe"]
 EMAIL_COLLECTION = DB["emails"]
+
+GOOGLE_BASE = "https://www.google.com/search?tbm=isch&q=%s"
 
 
 def gmail_to_mongo(email_data):
@@ -62,8 +69,13 @@ def nl2br(eval_ctx, value):
 
 @app.route('/')
 def home_page():
-    dates = sorted(set(map(lambda fname: re.findall('\d+', fname)[0], os.listdir('parsed_data'))))
-    return render_template('list.html', dates=dates)
+    # dates = sorted(set(map(lambda fname: re.findall('\d+', fname)[0], os.listdir('parsed_data'))))
+    emails = EMAIL_COLLECTION.find().limit(10)
+    dates = [(email, cal.parseDT(email["text"], email["date"])) for email in emails]
+    html_doc = r.get(GOOGLE_BASE % "cats").content
+    soup = BeautifulSoup(html_doc, 'html.parser')
+    print soup.find(id="res")
+    return render_template('list.html')
 
 
 @app.route('/email/<id>')
