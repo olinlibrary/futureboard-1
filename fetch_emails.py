@@ -143,7 +143,6 @@ def retrieve_emails(service, next_page=None):
 
             emails.setdefault(month, [])
             emails[month].append(email_content)
-
         for date, lst_emails in emails.items():
             update_jsons(lst_emails, date)
     else:
