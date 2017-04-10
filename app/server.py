@@ -30,9 +30,10 @@ _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
 
 cal = pdt.Calendar()
 
-CLIENT = MongoClient('localhost', 27017)
-DB = CLIENT["carpe"]
-EMAIL_COLLECTION = DB["emails"]
+# CLIENT = MongoClient('localhost', 27017)
+# DB = CLIENT["carpe"]
+# EMAIL_COLLECTION = DB["emails"]
+EMAIL_COLLECTION = None
 
 GOOGLE_BASE = "https://www.google.com/search?tbm=isch&q=%s"
 
@@ -88,7 +89,8 @@ def nl2br(eval_ctx, value):
 @app.route('/')
 def home_page():
     # dates = sorted(set(map(lambda fname: re.findall('\d+', fname)[0], os.listdir('parsed_data'))))
-    emails = EMAIL_COLLECTION.find().limit(10)
+    # emails = EMAIL_COLLECTION.find().limit(10)
+    emails = []
     dates = [(email, cal.parseDT(email["text"], email["date"])) for email in emails]
     html_doc = r.get(GOOGLE_BASE % "cats").content
     soup = BeautifulSoup(html_doc, 'html.parser')
