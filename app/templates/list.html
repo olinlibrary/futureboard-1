@@ -1,0 +1,34 @@
+{% extends 'layout.html' %}
+
+{% block page %}
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
+      <script type="text/javascript">
+        $(document).ready(function(){
+          var socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
+          console.log('http://' + document.domain + ':' + location.port + '/test');
+          var randomWidth, randomHeight
+          socket.on('response', function(msg) {
+            randomWidth = ($('#results').width()- 128) * Math.random();
+            randomHeight = (window.innerHeight - $('#navbar').height() - 200) * Math.random();
+            $('#results ul').append('<li style="top:'+randomHeight+';left:'+randomWidth+';"> \
+              <p>'+ msg.data +'</p>\
+            </li>');
+          });
+          $('button#send').click(function(event) {
+            socket.emit('my_event', {data: $('#emit-data').val()});
+            return false;
+          });
+        });
+      </script>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      {% include 'results.html' %}
+    </div>
+  </div>
+</div>
+{% endblock %}

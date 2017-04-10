@@ -19,9 +19,10 @@ import requests as r
 from pymongo import MongoClient
 import parsedatetime as pdt
 from pprint import PrettyPrinter
+from flask_socketio import SocketIO, emit
 
-from factory import create_app
-from models import get_date_format
+from app.factory import create_app
+from app.models import get_date_format
 
 pp = PrettyPrinter()
 
@@ -54,10 +55,24 @@ def gmail_to_mongo(email_data):
 
 
 app = create_app()
+socketio = SocketIO(app)
+
+
+@socketio.on('connect', namespace='/test')
+def handle_new_connection():
+    emit('response', {'data': 'Connected', 'count': 0})
+
+
+@socketio.on('my_event', namespace='/test')
+def handle_my_custom_event(json):
+    emit('response', json)
 
 
 @app.route('/health')
 def health():
+    socketio.emit('response',
+                  {'data': 'Server is healthy!'},
+                  namespace='/test')
     return 'ok'
 
 
@@ -80,6 +95,14 @@ def home_page():
     # print(soup.find(id="res"))
     pp.pprint([(email[0]['subject'], email[1][0].timestamp()) for email in dates])
     return render_template('list.html')
+
+
+@app.route('/twilio', methods=["GET", "POST"])
+def twilio_text():
+    socketio.emit('response',
+                  {'data': request.form.get('Body', request.form.values())},
+                  namespace='/test')
+    return json.dumps(request.form.get('Body'))
 
 
 @app.route('/images/<search_term>')
@@ -109,4 +132,6 @@ def filter_emails():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     host = "127.0.0.1" if port == 5000 else "0.0.0.0"
-    app.run(host=host, debug=True, port=port)
+    # app.run(host=host, debug=True, port=port)
+    print("Starting app!")
+    socketio.run(app, host=host, port=port)
