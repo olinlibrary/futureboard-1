@@ -16,6 +16,8 @@ DATE_FORMATS = ['%a %b %d %X %Y', '%a, %d %b %Y %X', '%d %b %Y %X']
 
 
 def read_emails(fpath):
+    """Fetches a particular month from parsed_data and returns it as a JSON
+    """
     with open(os.path.join(os.path.dirname(__file__), 'parsed_data/', fpath), 'r') as emails:
         return json.loads(emails.read())
 
@@ -29,6 +31,8 @@ def get_date_format(date_string):
 
 
 def get_email_model(email_json):
+    """Converts a JSON representation of an email message to a dictionary representation
+    """
     return {
         "message_id": email_json["id"],
         "text": email_json["text"],
@@ -39,9 +43,8 @@ def get_email_model(email_json):
         "replying_to": email_json["replying_to"]
     }
 
-
 def add_emails(date=None):
-    """Adds emails from parsed_data directory to the database. If no date is specified, it will add every month. """
+    """Adds emails from parsed_data directory to the database. If no date is specified, it will add every month."""
     if date:
         emails = [get_email_model(email) for email in read_emails(os.path.join(os.path.dirname(__file__), 'parsed_data/'+date+".json"))]
         print(EMAIL_COLLECTION.insert_many(emails).inserted_ids)
@@ -51,8 +54,9 @@ def add_emails(date=None):
             emails = [get_email_model(email) for email in read_emails(email_chunk)]
             EMAIL_COLLECTION.insert_many(emails).inserted_ids
 
-
 def reset_db():
+    """Resets the database and adds all the JSONs stored in the parsed_data directory
+    """
     EMAIL_COLLECTION.delete_many({})
     add_emails()
 

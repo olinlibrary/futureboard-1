@@ -74,6 +74,7 @@ def home_page():
     dates = [(email, cal.parseDT(email["text"], email["date"])) for email in emails]
     html_doc = r.get(GOOGLE_BASE % "cats").content
     soup = BeautifulSoup(html_doc, 'html.parser')
+<<<<<<< HEAD
     soup.find(id="res").find_all('img')
     return render_template('list.html')
 
@@ -84,6 +85,7 @@ def query_google(search_term):
     soup = BeautifulSoup(html_doc, 'html.parser')
     res = soup.find(id="res").find_all('img')[0].attrs.get('src')
     return json.dumps(res)
+
 
 @app.route('/email/<id>')
 def single_email_view(id):
