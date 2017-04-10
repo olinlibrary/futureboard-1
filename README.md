@@ -1,4 +1,4 @@
-# CarpFace
+# Carpe-Learning ![build](https://travis-ci.org/aidankmcl/carpe-learning.svg?branch=master)
 Data visualization for the carpediem email list at Olin
 
 ## Installing
