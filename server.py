@@ -82,6 +82,13 @@ def home_page():
     return render_template('list.html')
 
 
+@app.route('/images/<search_term>')
+def query_google(search_term):
+    html_doc = r.get(GOOGLE_BASE % "cats").content
+    soup = BeautifulSoup(html_doc, 'html.parser')
+    res = soup.find(id="res").find_all('img')[0].attrs.get('src')
+    return json.dumps(res)
+
 @app.route('/email/<id>')
 def single_email_view(id):
     email = EMAIL_COLLECTION.find_one({"message_id": id})

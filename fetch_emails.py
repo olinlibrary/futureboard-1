@@ -105,19 +105,18 @@ def parse_email(message):
             body = message['payload']['parts'][0]['parts'][0]['parts'][0]['body']['data']
     except:
         body = ""
-        print("Email "+email_content['id']+": "+email_content['subject']+" message body not found")
+        print("Email %s : %s message body not found" % (email_content['id'], email_content['subject']))
 
     missing_padding = len(body) % 4
     if missing_padding != 0:
-        body += str(b'='* (4 - missing_padding))
+        body += str(b'=' * (4 - missing_padding))
 
     try:
         email_content['text'] = base64.b64decode(body).decode(errors="ignore")      # Having unicode errors
     except TypeError:
         email_content['text'] = "Corrupted Data"
-        print("Email "+email_content['id']+": "+email_content['subject']+" is corrupted")
-
-    print(email_content['date']+ "\n")
+        print("Email %s: %s is corrupted" % (email_content['id'], email_content['subject']))
+    print(email_content['date'] + "\n")
     return email_content
 
 
