@@ -7,8 +7,9 @@
       <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
       <script type="text/javascript">
         $(document).ready(function(){
-          var socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
-          console.log('http://' + document.domain + ':' + location.port + '/test');
+          var protocol = (window.location.href.indexOf('https') > -1) ? 'https://' : 'http://';
+          var socket = io.connect(protocol + document.domain + ':' + location.port + '/test');
+
           var randomWidth, randomHeight
           socket.on('response', function(msg) {
             randomWidth = ($('#results').width()- 128) * Math.random();
