@@ -100,9 +100,9 @@ def update_jsons(emails, date):
         json.dump(emails, file)
     reset_db()      # Should change this to add_emails; just need to figure out how to selectively reset the database
 
-
-if __name__ == "__main__":
-
+def data_to_jsons():
+    """Goes through each data dump, parses the emails, and throws them into a JSON
+    """
     for email_dump in os.listdir(DATA_DIR):
         print(email_dump)
         emails = []
@@ -110,3 +110,8 @@ if __name__ == "__main__":
 
         with open(os.path.join(os.path.dirname(__file__), "parsed_data/", email_dump.split('.')[0] + ".json"), "w") as clean:
             json.dump(emails, clean)
+
+
+
+if __name__ == "__main__":
+    data_to_jsons()

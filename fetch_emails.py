@@ -44,6 +44,10 @@ def check_local_credentials():
 
 
 def request_live_credentials(store, credential_path):
+    """Completes OAuth2 authorization flow
+    Opens a separate window for the user to authorize the app
+    Returns credentials needed to access user's gmail resources
+    """
     flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
     flow.user_agent = APPLICATION_NAME
     if flags:
@@ -55,6 +59,9 @@ def request_live_credentials(store, credential_path):
 
 
 def get_credentials():
+    """Load or request credentials to access Gmail API with a user's
+    credentials
+    """
     credentials, store, credential_path = check_local_credentials()
     if not credentials or credentials.invalid:
         credentials = request_live_credentials(store, credential_path)
@@ -62,6 +69,18 @@ def get_credentials():
 
 
 def parse_email(message):
+    """Takes a message returned from a Gmail message get request
+    Parses the payload and headers to return a dictionary in the following format:
+        {
+            "id":           id assigned by carpediem mail server,
+            "text":         raw email text (includes newlines, etc.),
+            "subject":      email subject,
+            "date":         send date,
+            "author_name":  sender name,
+            "author_email": sender email,
+            "replying_to":  if a reply, the ID of the email being replied to
+        }
+    """
     email_content = {}
 
     email_content["id"] = message.get('id', False)
@@ -97,15 +116,17 @@ def parse_email(message):
     except TypeError:
         email_content['text'] = "Corrupted Data"
         print("Email "+email_content['id']+": "+email_content['subject']+" is corrupted")
-    # print(email_content['subject'])
-    # print(email_content['text'])
-    # print(' ')
+
     print(email_content['date']+ "\n")
     return email_content
 
 
 def retrieve_emails(service, next_page=None):
-
+    """Accesses Carpebot's inbox to find new emails
+    Marks those emails as accessed by adding the "email_stored" label
+    Parses the emails and then adds them to the JSON corresponding to the month they 
+    were sent
+    """
     results = service.users().messages().list(userId='me', q="to:carpediem@lists.olin.edu NOT label:email_stored", pageToken=next_page).execute()
 
     emails = {}
@@ -122,7 +143,6 @@ def retrieve_emails(service, next_page=None):
 
             emails.setdefault(month, [])
             emails[month].append(email_content)
-
         for date, lst_emails in emails.items():
             update_jsons(lst_emails, date)
     else:
@@ -133,8 +153,8 @@ def retrieve_emails(service, next_page=None):
 
 
 def main():
-    """Connects to gmail account and pulls out all new emails to the carpe list, then separates them
-        by month and sends them in batches to be stored in a JSON"""
+    """Connects to API client and runs retrieve_emails to find and store new emails
+    """
 
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
