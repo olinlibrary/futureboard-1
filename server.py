@@ -18,9 +18,12 @@ from jinja2 import evalcontextfilter, Markup, escape
 import requests as r
 from pymongo import MongoClient
 import parsedatetime as pdt
+from pprint import PrettyPrinter
 
 from factory import create_app
 from models import get_date_format
+
+pp = PrettyPrinter()
 
 _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
 
@@ -74,7 +77,8 @@ def home_page():
     dates = [(email, cal.parseDT(email["text"], email["date"])) for email in emails]
     html_doc = r.get(GOOGLE_BASE % "cats").content
     soup = BeautifulSoup(html_doc, 'html.parser')
-    print(soup.find(id="res"))
+    # print(soup.find(id="res"))
+    pp.pprint([(email[0]['subject'], email[1][0].timestamp()) for email in dates])
     return render_template('list.html')
 
 
@@ -89,7 +93,10 @@ def filter_emails():
     dates = request.form.get("date_range", "01/01/2005 - 01/31/2005").split(" - ")  # sets default to Jan 2005
     start_date, end_date = datetime.strptime(dates[0], '%m/%d/%Y'), datetime.strptime(dates[1], '%m/%d/%Y')
     emails = EMAIL_COLLECTION.find({"date": {"$gt": start_date, "$lt": end_date}})
-    return json.dumps([email for email in emails], default=json_util.default)
+    print(type(emails))
+    dates = [(email, cal.parseDT(email["subject"], email["date"])) for email in emails]
+    pp.pprint([(email[0]['subject'], email[1][0].timestamp()) for email in dates])
+    return json.dumps([email[0] for email in dates], default=json_util.default)
 
 
 if __name__ == '__main__':
