@@ -95,7 +95,7 @@ def filter_emails():
     emails = EMAIL_COLLECTION.find({"date": {"$gt": start_date, "$lt": end_date}})
     print(type(emails))
     dates = [(email, cal.parseDT(email["subject"], email["date"])) for email in emails]
-    pp.pprint([(email[0]['subject'], email[1][0].timestamp()) for email in dates])
+    pp.pprint([(email[0]['subject'], email[1][0]) for email in dates])
     return json.dumps([email[0] for email in dates], default=json_util.default)
 
 

@@ -25,8 +25,8 @@ def test_k(k_val):
     true_k = k_val
     model = KMeans(n_clusters=true_k, init='k-means++', max_iter=1000, n_init=1)
     model.fit(X)
-    print "\n"
-    print "Top terms per cluster (" + str(k_val) + " clusters!):"
+    print("\n")
+    print("Top terms per cluster (" + str(k_val) + " clusters!):")
     order_centroids = model.cluster_centers_.argsort()[:, ::-1]
     terms = vectorizer.get_feature_names()
     for i in range(true_k):
