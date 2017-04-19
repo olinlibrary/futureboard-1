@@ -57,14 +57,24 @@ def gmail_to_mongo(email_data):
 
 app = create_app()
 socketio = SocketIO(app)
+COUNT = 0
 
 
-@socketio.on('connect', namespace='/test')
+@socketio.on('connect', namespace='/text')
 def handle_new_connection():
-    emit('response', {'data': 'Connected', 'count': 0})
+    global COUNT
+    COUNT += 1
+    emit('connection', {'data': 'Connected', 'count': COUNT})
 
 
-@socketio.on('my_event', namespace='/test')
+@socketio.on('disconnect', namespace='/text')
+def handle_dropped_connection():
+    global COUNT
+    COUNT -= 1
+    emit('connection', {'data': 'Disconnected', 'count': COUNT})
+
+
+@socketio.on('my_event', namespace='/text')
 def handle_my_custom_event(json):
     emit('response', json)
 
@@ -73,7 +83,7 @@ def handle_my_custom_event(json):
 def health():
     socketio.emit('response',
                   {'data': 'Server is healthy!'},
-                  namespace='/test')
+                  namespace='/text')
     return 'ok'
 
 
@@ -90,20 +100,22 @@ def nl2br(eval_ctx, value):
 def home_page():
     # dates = sorted(set(map(lambda fname: re.findall('\d+', fname)[0], os.listdir('parsed_data'))))
     # emails = EMAIL_COLLECTION.find().limit(10)
-    emails = []
-    dates = [(email, cal.parseDT(email["text"], email["date"])) for email in emails]
-    html_doc = r.get(GOOGLE_BASE % "cats").content
-    soup = BeautifulSoup(html_doc, 'html.parser')
-    # print(soup.find(id="res"))
-    pp.pprint([(email[0]['subject'], email[1][0].timestamp()) for email in dates])
-    return render_template('list.html')
+    return render_template('board.html')
 
 
 @app.route('/twilio', methods=["GET", "POST"])
 def twilio_text():
     socketio.emit('response',
                   {'data': request.form.get('Body', request.form.values())},
-                  namespace='/test')
+                  namespace='/text')
+    return json.dumps(request.form.get('Body'))
+
+
+@app.route('/test-twilio', methods=["GET", "POST"])
+def test_twilio_text():
+    socketio.emit('response',
+                  {'data': request.form.get('Body', request.form.values())},
+                  namespace='/text')
     return json.dumps(request.form.get('Body'))
 
 
