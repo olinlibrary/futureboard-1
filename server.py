@@ -93,9 +93,23 @@ def filter_emails():
     dates = request.form.get("date_range", "01/01/2005 - 01/31/2005").split(" - ")  # sets default to Jan 2005
     start_date, end_date = datetime.strptime(dates[0], '%m/%d/%Y'), datetime.strptime(dates[1], '%m/%d/%Y')
     emails = EMAIL_COLLECTION.find({"date": {"$gt": start_date, "$lt": end_date}})
-    print(type(emails))
-    dates = [(email, cal.parseDT(email["subject"], email["date"])) for email in emails]
-    pp.pprint([(email[0]['subject'], email[1][0]) for email in dates])
+    dates = []
+    for email in emails:
+        subject = email['subject']
+        date = email['date']
+        text = re.sub(re.compile("[^a-zA-Z0-9 /:]*"), "", email['text'])
+        subj_date = cal.parseDT(email["subject"], date)
+        body_date = cal.parseDT(text, date)
+        print(subject)
+        print(date)
+        print(subj_date)
+        print(body_date)
+        if body_date[1] == 3:
+            print(text)
+        print("")
+        # dates.append((email, ))
+    # dates = [(email, cal.parseDT(email["subject"], email["date"])) for email in emails]
+    # pp.pprint([(email[0]['subject'], email[1]) for email in dates])
     return json.dumps([email[0] for email in dates], default=json_util.default)
 
 

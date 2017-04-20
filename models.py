@@ -53,7 +53,11 @@ def add_emails(date=None):
             print(email_chunk)
             emails = [get_email_model(email) for email in read_emails(email_chunk)]
             EMAIL_COLLECTION.insert_many(emails).inserted_ids
-
+def parse_events(data=None):
+    """Finds dates in the subjects of emails or texts, and creates events from those dates. Data is a list of id's; if not
+    specified, parses all emails in EMAIL_COLLECTION and TEXT_COLLECTION
+    """
+    
 def reset_db():
     """Resets the database and adds all the JSONs stored in the parsed_data directory
     """
