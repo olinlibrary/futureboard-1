@@ -16,7 +16,7 @@ function placeTile(msg) {
   switch (type) {
     case 'text':
       $('#results ul').append('<li style="top:'+randomHeight+';left:'+randomWidth+';"> \
-        <p>' + type + msg.data +'</p>\
+        <p>' + msg.data +'</p>\
       </li>');
       break;
     case 'image':
