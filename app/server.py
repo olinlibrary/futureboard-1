@@ -23,6 +23,7 @@ from flask_socketio import SocketIO, emit
 
 from app.factory import create_app
 from app.models import get_date_format
+from settings import mongo_user, mongo_password
 
 pp = PrettyPrinter()
 
@@ -30,10 +31,8 @@ _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
 
 cal = pdt.Calendar()
 
-# CLIENT = MongoClient('localhost', 27017)
-# DB = CLIENT["carpe"]
-# EMAIL_COLLECTION = DB["emails"]
-EMAIL_COLLECTION = None
+CLIENT = MongoClient('mongodb://%s:%s@ds111791.mlab.com:11791/futureboard' % (mongo_user, mongo_password))
+EMAIL_COLLECTION = CLIENT.futureboard.emails
 
 GOOGLE_BASE = "https://www.google.com/search?tbm=isch&q=%s"
 

@@ -4,6 +4,8 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import adjusted_rand_score
 from sklearn.feature_extraction import text 
 
+from settings import mongo_user, mongo_password
+
 stop_words = text.ENGLISH_STOP_WORDS.union([
     "carpediem", "Carpediem", "olin", "lists", "students", "listinfo", "edu",
     "3d", "font", "style", "mso", "xmlns", "skipped", "multipart", "alternative",
@@ -11,14 +13,14 @@ stop_words = text.ENGLISH_STOP_WORDS.union([
     "_______________________________________________",
 ])
 
-client = MongoClient('localhost', 27017)
-email_collection = client["carpe"]["emails"]
-emails = email_collection.find().limit(30000)
-documents = [email.get("subject", False) for email in emails if not False]
+CLIENT = MongoClient('mongodb://%s:%s@ds111791.mlab.com:11791/futureboard' % (mongo_user, mongo_password))
+EMAIL_COLLECTION = CLIENT.futureboard.emails
+EMAILS = EMAIL_COLLECTION.find().limit(30000)
+DOCUMENTS = [email.get("subject", False) for email in EMAILS if not False]
 # documents = ["aidan"]
 
 vectorizer = TfidfVectorizer(stop_words=stop_words, min_df=10)
-X = vectorizer.fit_transform(documents)
+X = vectorizer.fit_transform(DOCUMENTS)
 
 
 def test_k(k_val):
