@@ -1,5 +1,6 @@
 
 from datetime import datetime
+import parsedatetime as pdt
 import json
 import os
 import re
@@ -13,7 +14,7 @@ EVENT_COLLECTION = CLIENT['futureboard']['events']
 # Characters we don't want in our message ids
 DEL_CHARS = ''.join(c for c in map(chr, range(256)) if not c.isalnum())
 DATE_FORMATS = ['%a %b %d %X %Y', '%a, %d %b %Y %X', '%d %b %Y %X']
-
+cal = pdt.Calendar()
 
 def read_emails(fpath):
     """Fetches a particular month from parsed_data and returns it as a JSON
@@ -49,6 +50,7 @@ def identify_events(data, src_id, date, collection):
     and collection is the collection the email or text goes into 
     """
     event_date = cal.parseDT(data, date)
+    print(event_date)
     if event_date[1]:
         if not EVENT_COLLECTION.find({"src_id": src_id}):
             EVENT_COLLECTION.insert({'data': data, 'date': event_date, 'collection': collection, 'src_id': src_id})
