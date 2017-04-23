@@ -70,17 +70,23 @@ ul.options {
 			padding: 10px;
 			background: white;
 		}
+			#results ul li iframe, #results ul li img {
+				max-width: 100%;
+			}
 		#results ul li.text {
 			max-width: 150px;
 			border: 1px solid royalblue;
 			border-top: 20px solid royalblue;
 		}
 		#results ul li.video {
-			max-width: 500px;
+			max-width: 560px;
+			max-height: 336px;
+			padding: 0px;
 			border: 1px solid #95D765;
 			border-top: 20px solid #95D765;
 		}
 		#results ul li.image {
+			padding: 0px;
 			max-width: 400px;
 			border: 1px solid #D06269;
 			border-top: 20px solid #D06269;

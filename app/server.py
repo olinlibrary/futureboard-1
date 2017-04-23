@@ -36,6 +36,7 @@ if not MONGO_URI:
 CLIENT = MongoClient(MONGO_URI)
 EMAIL_COLLECTION = CLIENT.futureboard.emails
 TEXT_COLLECTION = CLIENT.futureboard.texts
+EVENT_COLLECTION = CLIENT.futureboard.events
 
 GOOGLE_BASE = "https://www.google.com/search?tbm=isch&q=%s"
 
@@ -111,6 +112,14 @@ def get_texts():
     end_date = cal.parseDT(request.args.get('end'))[0]
     texts = TEXT_COLLECTION.find({"date": {"$gte": start_date, "$lte": end_date}})
     return json.dumps(list(texts), default=json_util.default)
+
+
+@app.route('/events')
+def get_events():
+    start_date = cal.parseDT(request.args.get('start'))[0]
+    end_date = cal.parseDT(request.args.get('end'))[0]
+    events = EVENT_COLLECTION.find({"date": {"$gte": start_date, "$lte": end_date}})
+    return json.dumps(list(events), default=json_util.default)
 
 
 @app.route('/twilio', methods=["GET", "POST"])
