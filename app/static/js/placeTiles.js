@@ -1,5 +1,6 @@
 function getType(msg) {
-  if (msg.data.indexOf('http') > -1) {
+  var urlRegex = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})/;
+  if (msg.data.match(urlRegex)) {
     return (msg.data.match(/(youtu|vimeo)/)) ? 'video' : 'image';
   } else {
     return 'text';
@@ -28,23 +29,23 @@ function getRandomPosition(type) {
 function placeTile(msg) {
   var type = getType(msg);
   var randomPos = getRandomPosition(type);
-
-  var $li = $('<li class="'+type+'" style="top:'+randomPos.top+';left:'+randomPos.left+';"></li>')
+  var $li = $('<li id="'+ msg.date.$date.toString() +'" class="'+type+'" style="top:'+randomPos.top+';left:'+randomPos.left+';"></li>')
 
   switch (type) {
     case 'text':
       $li.html('<p>' + msg.data + '</p>');
       break;
     case 'image':
-      $li.html('<img style="max-width: 500px;" src="'+ msg.data +'" />');
+      $li.html('<img src="'+ msg.data +'" />');
       break;
     case 'video':
       var url = msg.data.split('watch?v=')[1];
-      $li.html('<iframe width="560" height="315" src="https://www.youtube.com/embed/'+ url +'?rel=0&amp;autoplay=1&amp;controls=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe>');
+      $li.html('<iframe width="560" height="315" src="https://www.youtube.com/embed/'+ url +'?rel=0&amp;controls=0&amp;showinfo=1" frameborder="0" allowfullscreen></iframe>');
       break;
   }
 
   $('#results ul').append($li);
+  $('#' + msg.date.$date.toString()).draggable();
 }
 
 $(document).ready(function(){
@@ -67,5 +68,10 @@ $(document).ready(function(){
   $.get('/texts?start=' + start.toString() + '&end=' + end.toString(), function(texts) {
     texts = JSON.parse(texts);
     for (var i=0; i<texts.length; i++) placeTile(texts[i]);
-  })
+  });
+
+  // $.get('/events?start=' + start.toString() + '&end=' + end.toString(), function(eventList) {
+  //   eventList = JSON.parse(eventList);
+  //   for (var i=0; i<eventList.length; i++) placeEvent(eventList[i]);
+  // });
 });
