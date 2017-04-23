@@ -19,9 +19,10 @@ import requests as r
 from pymongo import MongoClient
 import parsedatetime as pdt
 from pprint import PrettyPrinter
+from flask_socketio import SocketIO, emit
 
-from factory import create_app
-from models import get_date_format
+from app.factory import create_app
+from app.models import get_date_format
 
 pp = PrettyPrinter()
 
@@ -29,9 +30,12 @@ _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
 
 cal = pdt.Calendar()
 
-CLIENT = MongoClient('localhost', 27017)
-DB = CLIENT["carpe"]
-EMAIL_COLLECTION = DB["emails"]
+MONGO_URI = os.environ.get('MONGODB_URI')
+if not MONGO_URI:
+    print("MONGODB_URI environment variable not set")
+CLIENT = MongoClient(MONGO_URI)
+EMAIL_COLLECTION = CLIENT.futureboard.emails
+TEXT_COLLECTION = CLIENT.futureboard.texts
 
 GOOGLE_BASE = "https://www.google.com/search?tbm=isch&q=%s"
 
@@ -54,10 +58,34 @@ def gmail_to_mongo(email_data):
 
 
 app = create_app()
+socketio = SocketIO(app)
+COUNT = 0
+
+
+@socketio.on('connect', namespace='/text')
+def handle_new_connection():
+    global COUNT
+    COUNT += 1
+    emit('connection', {'data': 'Connected', 'count': COUNT})
+
+
+@socketio.on('disconnect', namespace='/text')
+def handle_dropped_connection():
+    global COUNT
+    COUNT -= 1
+    emit('connection', {'data': 'Disconnected', 'count': COUNT})
+
+
+@socketio.on('my_event', namespace='/text')
+def handle_my_custom_event(json):
+    emit('response', json)
 
 
 @app.route('/health')
 def health():
+    socketio.emit('response',
+                  {'data': 'Server is healthy!'},
+                  namespace='/text')
     return 'ok'
 
 
@@ -73,13 +101,49 @@ def nl2br(eval_ctx, value):
 @app.route('/')
 def home_page():
     # dates = sorted(set(map(lambda fname: re.findall('\d+', fname)[0], os.listdir('parsed_data'))))
-    emails = EMAIL_COLLECTION.find().limit(10)
-    dates = [(email, cal.parseDT(email["text"], email["date"])) for email in emails]
+    # emails = EMAIL_COLLECTION.find().limit(10)
+    return render_template('board.html')
+
+
+@app.route('/texts')
+def get_texts():
+    start_date = cal.parseDT(request.args.get('start'))[0]
+    end_date = cal.parseDT(request.args.get('end'))[0]
+    texts = TEXT_COLLECTION.find({"date": {"$gte": start_date, "$lte": end_date}})
+    return json.dumps(list(texts), default=json_util.default)
+
+
+@app.route('/twilio', methods=["GET", "POST"])
+def twilio_text():
+    print "\n\n", request.form.get('MediaUrl')
+    TEXT_COLLECTION.insert({
+        'from': request.form.get('From', ''),
+        'data': request.form.get('Body', ''),
+        'date': datetime.now()})
+    socketio.emit('response',
+                  {'data': request.form.get('Body', request.form.values())},
+                  namespace='/text')
+    return json.dumps(request.form.get('Body'))
+
+
+@app.route('/test-twilio', methods=["GET", "POST"])
+def test_twilio_text():
+    TEXT_COLLECTION.insert({
+        'from': request.form.get('From'),
+        'data': request.form.get('Body'),
+        'date': datetime.now()})
+    socketio.emit('response',
+                  {'data': request.form.get('Body', request.form.values())},
+                  namespace='/text')
+    return json.dumps(request.form.get('Body'))
+
+
+@app.route('/images/<search_term>')
+def query_google(search_term):
     html_doc = r.get(GOOGLE_BASE % "cats").content
     soup = BeautifulSoup(html_doc, 'html.parser')
-    # print(soup.find(id="res"))
-    pp.pprint([(email[0]['subject'], email[1][0].timestamp()) for email in dates])
-    return render_template('list.html')
+    res = soup.find(id="res").find_all('img')[0].attrs.get('src')
+    return json.dumps(res)
 
 
 @app.route('/email/<id>')
@@ -116,4 +180,6 @@ def filter_emails():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     host = "127.0.0.1" if port == 5000 else "0.0.0.0"
-    app.run(host=host, debug=True, port=port)
+    # app.run(host=host, debug=True, port=port)
+    print("Starting app!")
+    socketio.run(app, host=host, port=port)

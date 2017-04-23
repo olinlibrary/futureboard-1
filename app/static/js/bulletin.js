@@ -11,6 +11,7 @@ $(function() {
 				randomWidth = ($('#results').width()- 128) * Math.random();
 				randomHeight = (window.innerHeight - $('#navbar').height() - 200) * Math.random();
 				$('#results ul').append('<li style="top:'+randomHeight+';left:'+randomWidth+';"> \
+					<img src=""/>\
 					<a href="/email/' + email.message_id + '" class="subject">' + email.subject + '</a> \
 				</li>');
 			});

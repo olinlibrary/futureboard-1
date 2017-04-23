@@ -6,11 +6,8 @@ import re
 
 from pymongo import MongoClient
 
-CLIENT = MongoClient('localhost', 27017)
-DB = CLIENT["carpe"]
-EMAIL_COLLECTION = DB["emails"]
-TEXT_COLLECTION = DB["texts"]
-EVENT_COLLECTION = DB["events"]
+CLIENT = MongoClient(os.environ.get('MONGODB_URI', ''))
+EMAIL_COLLECTION = CLIENT['futureboard']['emails']
 
 # Characters we don't want in our message ids
 DEL_CHARS = ''.join(c for c in map(chr, range(256)) if not c.isalnum())
@@ -20,7 +17,7 @@ DATE_FORMATS = ['%a %b %d %X %Y', '%a, %d %b %Y %X', '%d %b %Y %X']
 def read_emails(fpath):
     """Fetches a particular month from parsed_data and returns it as a JSON
     """
-    with open(os.path.join(os.path.dirname(__file__), 'parsed_data/', fpath), 'r') as emails:
+    with open(os.path.join(os.path.dirname(__file__), '..', 'parsed_data/', fpath), 'r') as emails:
         return json.loads(emails.read())
 
 
@@ -45,13 +42,14 @@ def get_email_model(email_json):
         "replying_to": email_json["replying_to"]
     }
 
+
 def add_emails(date=None):
     """Adds emails from parsed_data directory to the database. If no date is specified, it will add every month."""
     if date:
-        emails = [get_email_model(email) for email in read_emails(os.path.join(os.path.dirname(__file__), 'parsed_data/'+date+".json"))]
+        emails = [get_email_model(email) for email in read_emails(os.path.join(os.path.dirname(__file__), '..', 'parsed_data/'+date+".json"))]
         print(EMAIL_COLLECTION.insert_many(emails).inserted_ids)
     else:
-        for email_chunk in os.listdir(os.path.join(os.path.dirname(__file__), 'parsed_data/')):
+        for email_chunk in os.listdir(os.path.join(os.path.dirname(__file__), '..', 'parsed_data/')):
             print(email_chunk)
             emails = [get_email_model(email) for email in read_emails(email_chunk)]
             EMAIL_COLLECTION.insert_many(emails).inserted_ids
@@ -77,11 +75,13 @@ def parse_events(data=None):
             EVENT_COLLECTION.insert({"body": text['body'], "type": 'text', "src_id": text["_id"]})
 
 
+
 def reset_db():
-    """Resets the database and adds all the JSONs stored in the parsed_data directory
+    """
+    Resets the database and adds all the JSONs stored in the parsed_data directory
     """
     EMAIL_COLLECTION.delete_many({})
     add_emails()
 
 if __name__ == "__main__":
-    parse_events()
+    reset_db()

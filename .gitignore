@@ -3,6 +3,7 @@ data
 parsed_data
 client_secret.json
 node_modules/
+settings.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
