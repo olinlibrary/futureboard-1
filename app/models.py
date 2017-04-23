@@ -6,9 +6,7 @@ import re
 
 from pymongo import MongoClient
 
-from settings import mongo_user, mongo_password
-
-CLIENT = MongoClient('mongodb://%s:%s@ds111791.mlab.com:11791/futureboard' % (mongo_user, mongo_password))
+CLIENT = MongoClient(os.environ.get('MONGODB_URI', ''))
 EMAIL_COLLECTION = CLIENT.futureboard.emails
 
 # Characters we don't want in our message ids

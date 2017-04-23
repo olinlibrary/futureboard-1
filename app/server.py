@@ -23,7 +23,6 @@ from flask_socketio import SocketIO, emit
 
 from app.factory import create_app
 from app.models import get_date_format
-from settings import mongo_user, mongo_password
 
 pp = PrettyPrinter()
 
@@ -31,7 +30,10 @@ _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
 
 cal = pdt.Calendar()
 
-CLIENT = MongoClient('mongodb://%s:%s@ds111791.mlab.com:11791/futureboard' % (mongo_user, mongo_password))
+MONGO_URI = os.environ.get('MONGODB_URI')
+if not MONGO_URI:
+    print("MONGODB_URI environment variable not set")
+CLIENT = MongoClient(MONGO_URI)
 EMAIL_COLLECTION = CLIENT.futureboard.emails
 
 GOOGLE_BASE = "https://www.google.com/search?tbm=isch&q=%s"

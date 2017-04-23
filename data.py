@@ -1,10 +1,10 @@
+import os
+
 from pymongo import MongoClient
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
 from sklearn.metrics import adjusted_rand_score
-from sklearn.feature_extraction import text 
-
-from settings import mongo_user, mongo_password
+from sklearn.feature_extraction import text
 
 stop_words = text.ENGLISH_STOP_WORDS.union([
     "carpediem", "Carpediem", "olin", "lists", "students", "listinfo", "edu",
@@ -13,7 +13,7 @@ stop_words = text.ENGLISH_STOP_WORDS.union([
     "_______________________________________________",
 ])
 
-CLIENT = MongoClient('mongodb://%s:%s@ds111791.mlab.com:11791/futureboard' % (mongo_user, mongo_password))
+CLIENT = MongoClient(os.environ.get('MONGODB_URI', ''))
 EMAIL_COLLECTION = CLIENT.futureboard.emails
 EMAILS = EMAIL_COLLECTION.find().limit(30000)
 DOCUMENTS = [email.get("subject", False) for email in EMAILS if not False]
