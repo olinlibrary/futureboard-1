@@ -1,3 +1,14 @@
+h1#number {
+    background: #333;
+    color: white;
+    font-family: "Quicksand";
+    margin: 10px 0px 0px 0px;
+    padding: 10px 10px 10px 20px;
+	position: absolute;
+	z-index: 1000;
+}
+
+
 .top {
 	background-image: url('/static/images/blue-lines.png');
 	background-repeat: repeat;
@@ -42,26 +53,39 @@ ul.options {
 		margin-bottom: 25px;
 	}
 
-#results ul {
-	padding-left: 0;
-	position: relative;
-}
-	#results ul li {
-		position: absolute;
-		list-style: none;
-		width: 128px;
-		height: 165px;
-		border: 2px solid #333;
-		padding: 10px;
-		background: white;
-	}
 
-	#results ul .subject {
-		font-weight: 500;
-		font-size: 12px;
-		transition: all 150ms ease-in;
+#results {
+	position: absolute;
+	width: 100%;
+	height: 100vh;
+}
+	#results ul {
+		margin: 0;
+		padding-left: 0;
+		position: relative;
 	}
-		#results ul .subject:hover {
-			cursor: pointer;
-			color: #0087c6;
+		#results ul li {
+			position: absolute;
+			list-style: none;
+			padding: 10px;
+			background: white;
 		}
+		#results ul li.text {
+			max-width: 150px;
+			border: 1px solid royalblue;
+			border-top: 20px solid royalblue;
+		}
+		#results ul li.video {
+			max-width: 150px;
+			border-top: 20px solid royalblue;
+		}
+		#results ul li.image {
+			max-width: 150px;
+			border-top: 20px solid royalblue;
+		}
+
+			#results ul li p {
+				font-family: "Quicksand", sans-serif;
+				font-weight: 300;
+				margin-bottom: 5px;
+			}

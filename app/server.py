@@ -105,13 +105,21 @@ def home_page():
     return render_template('board.html')
 
 
+@app.route('/texts')
+def get_texts():
+    start_date = cal.parseDT(request.args.get('start'))[0]
+    end_date = cal.parseDT(request.args.get('end'))[0]
+    texts = TEXT_COLLECTION.find({"date": {"$gte": start_date, "$lte": end_date}})
+    return json.dumps(list(texts), default=json_util.default)
+
+
 @app.route('/twilio', methods=["GET", "POST"])
 def twilio_text():
     print "\n\n", request.form.get('MediaUrl')
     TEXT_COLLECTION.insert({
-        'from': request.form.get('From'),
+        'from': request.form.get('From', ''),
         'data': request.form.get('Body', ''),
-        'created': datetime.now()})
+        'date': datetime.now()})
     socketio.emit('response',
                   {'data': request.form.get('Body', request.form.values())},
                   namespace='/text')
@@ -123,7 +131,7 @@ def test_twilio_text():
     TEXT_COLLECTION.insert({
         'from': request.form.get('From'),
         'data': request.form.get('Body'),
-        'created': datetime.now()})
+        'date': datetime.now()})
     socketio.emit('response',
                   {'data': request.form.get('Body', request.form.values())},
                   namespace='/text')
@@ -136,6 +144,7 @@ def query_google(search_term):
     soup = BeautifulSoup(html_doc, 'html.parser')
     res = soup.find(id="res").find_all('img')[0].attrs.get('src')
     return json.dumps(res)
+
 
 @app.route('/email/<id>')
 def single_email_view(id):
