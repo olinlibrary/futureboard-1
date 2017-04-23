@@ -9,6 +9,8 @@ from pymongo import MongoClient
 CLIENT = MongoClient('localhost', 27017)
 DB = CLIENT["carpe"]
 EMAIL_COLLECTION = DB["emails"]
+TEXT_COLLECTION = DB["texts"]
+EVENT_COLLECTION = DB["events"]
 
 # Characters we don't want in our message ids
 DEL_CHARS = ''.join(c for c in map(chr, range(256)) if not c.isalnum())
@@ -57,7 +59,24 @@ def parse_events(data=None):
     """Finds dates in the subjects of emails or texts, and creates events from those dates. Data is a list of id's; if not
     specified, parses all emails in EMAIL_COLLECTION and TEXT_COLLECTION
     """
+    if data:
+        # Find id's in database, update in database
+        emails = EMAIL_COLLECTION.find({"_id": {"$in": data}})
+        texts = TEXT_COLLECTION.find({"_id": {"$in": data}})
+    else:
+        emails = EMAIL_COLLECTION.find()
+        texts = TEXT_COLLECTION.find()
     
+    for email in emails:
+        # If the subject is not in EVENTS, strip out an event and add that and the subject to EVENTS
+        if not EVENT_COLLECTION.find({"src_id": emai['_id']}):
+            EVENT_COLLECTION.insert({"subject": email['subject'], "body": email['text'], "type": 'email', "src_id": email["_id"]})
+    for text in texts:
+        # If the text is not in TEXTS, strip out an event and add that and the text to EVENTS
+        if not EVENT_COLLECTION.find({"src_id": text['_id']}):
+            EVENT_COLLECTION.insert({"body": text['body'], "type": 'text', "src_id": text["_id"]})
+
+
 def reset_db():
     """Resets the database and adds all the JSONs stored in the parsed_data directory
     """
@@ -65,4 +84,4 @@ def reset_db():
     add_emails()
 
 if __name__ == "__main__":
-    reset_db()
+    parse_events()
