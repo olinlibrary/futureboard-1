@@ -6,7 +6,7 @@ Aidan McLaughlin - Jan 21, 2017
 import re
 import os
 import json
-from models import reset_db
+from app.models import reset_db
 DATA_DIR = os.path.join(os.path.dirname(__file__), 'data/')
 month_map = {"Jan": "january", "Feb": "february", "Mar": "march", "Apr": "april", "May": "may", "Jun": "june", "Jul": "july", "Aug": "august",
  "Sep": "september", "Oct": "october", "Nov": "november", "Dec": "december"}

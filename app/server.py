@@ -22,7 +22,7 @@ from pprint import PrettyPrinter
 from flask_socketio import SocketIO, emit
 
 from app.factory import create_app
-from app.models import get_date_format
+from app.models import get_date_format, identify_events
 
 pp = PrettyPrinter()
 
@@ -115,11 +115,14 @@ def get_texts():
 
 @app.route('/twilio', methods=["GET", "POST"])
 def twilio_text():
-    print "\n\n", request.form.get('MediaUrl')
-    TEXT_COLLECTION.insert({
+    data = request.form.get('Body', '')
+    date = datetime.now()
+    print("\n\n", request.form.get('MediaUrl'))
+    src_id = TEXT_COLLECTION.insert({
         'from': request.form.get('From', ''),
-        'data': request.form.get('Body', ''),
-        'date': datetime.now()})
+        'data': data,
+        'date': date})
+    identify_events(data, src_id, date, "texts")
     socketio.emit('response',
                   {'data': request.form.get('Body', request.form.values())},
                   namespace='/text')
