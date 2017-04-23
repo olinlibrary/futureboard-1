@@ -7,7 +7,7 @@ import re
 from pymongo import MongoClient
 
 CLIENT = MongoClient(os.environ.get('MONGODB_URI', ''))
-EMAIL_COLLECTION = CLIENT.futureboard.emails
+EMAIL_COLLECTION = CLIENT['futureboard']['emails']
 
 # Characters we don't want in our message ids
 DEL_CHARS = ''.join(c for c in map(chr, range(256)) if not c.isalnum())

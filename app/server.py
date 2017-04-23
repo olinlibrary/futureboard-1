@@ -35,6 +35,7 @@ if not MONGO_URI:
     print("MONGODB_URI environment variable not set")
 CLIENT = MongoClient(MONGO_URI)
 EMAIL_COLLECTION = CLIENT.futureboard.emails
+TEXT_COLLECTION = CLIENT.futureboard.texts
 
 GOOGLE_BASE = "https://www.google.com/search?tbm=isch&q=%s"
 
@@ -106,6 +107,11 @@ def home_page():
 
 @app.route('/twilio', methods=["GET", "POST"])
 def twilio_text():
+    print "\n\n", request.form.get('MediaUrl')
+    TEXT_COLLECTION.insert({
+        'from': request.form.get('From'),
+        'data': request.form.get('Body', ''),
+        'created': datetime.now()})
     socketio.emit('response',
                   {'data': request.form.get('Body', request.form.values())},
                   namespace='/text')
@@ -114,6 +120,10 @@ def twilio_text():
 
 @app.route('/test-twilio', methods=["GET", "POST"])
 def test_twilio_text():
+    TEXT_COLLECTION.insert({
+        'from': request.form.get('From'),
+        'data': request.form.get('Body'),
+        'created': datetime.now()})
     socketio.emit('response',
                   {'data': request.form.get('Body', request.form.values())},
                   namespace='/text')
