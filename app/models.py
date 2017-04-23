@@ -52,8 +52,8 @@ def identify_events(data, src_id, date, collection):
     event_date = cal.parseDT(data, date)
     print(event_date)
     if event_date[1]:
-        if not EVENT_COLLECTION.find({"src_id": src_id}):
-            EVENT_COLLECTION.insert({'data': data, 'date': event_date, 'collection': collection, 'src_id': src_id})
+        # if not EVENT_COLLECTION.find({"src_id": src_id}):
+        EVENT_COLLECTION.insert({'data': data, 'date': event_date, 'collection': collection, 'src_id': src_id})
 
 def add_emails(date=None):
     """Adds emails from parsed_data directory to the database. If no date is specified, it will add every month."""
