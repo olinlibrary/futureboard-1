@@ -76,12 +76,14 @@ ul.options {
 			border-top: 20px solid royalblue;
 		}
 		#results ul li.video {
-			max-width: 150px;
-			border-top: 20px solid royalblue;
+			max-width: 500px;
+			border: 1px solid #95D765;
+			border-top: 20px solid #95D765;
 		}
 		#results ul li.image {
-			max-width: 150px;
-			border-top: 20px solid royalblue;
+			max-width: 400px;
+			border: 1px solid #D06269;
+			border-top: 20px solid #D06269;
 		}
 
 			#results ul li p {
