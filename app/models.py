@@ -44,16 +44,17 @@ def get_email_model(email_json):
         "replying_to": email_json["replying_to"]
     }
 
+
 def identify_events(data, src_id, date, collection):
     """Finds dates in the subjects of emails or texts, and creates events from those dates. Data is a string, src_id is the 
     unique id associated with the email or text in its respective collection, and date is the datetime the email or text was sent,
     and collection is the collection the email or text goes into 
     """
     event_date = cal.parseDT(data, date)
-    print(event_date)
     if event_date[1]:
         # if not EVENT_COLLECTION.find({"src_id": src_id}):
-        EVENT_COLLECTION.insert({'data': data, 'date': event_date, 'collection': collection, 'src_id': src_id})
+        EVENT_COLLECTION.insert({'data': data, 'date': event_date[0], 'collection': collection, 'src_id': src_id})
+
 
 def add_emails(date=None):
     """Adds emails from parsed_data directory to the database. If no date is specified, it will add every month."""
