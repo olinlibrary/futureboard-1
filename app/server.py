@@ -20,6 +20,7 @@ from pymongo import MongoClient
 import parsedatetime as pdt
 from pprint import PrettyPrinter
 from flask_socketio import SocketIO, emit
+from twilio.rest import Client
 
 from app.factory import create_app
 from app.models import get_date_format, identify_events
@@ -30,6 +31,7 @@ _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
 
 cal = pdt.Calendar()
 
+# MONGO
 MONGO_URI = os.environ.get('MONGODB_URI')
 if not MONGO_URI:
     print("MONGODB_URI environment variable not set")
@@ -38,8 +40,11 @@ EMAIL_COLLECTION = CLIENT.futureboard.emails
 TEXT_COLLECTION = CLIENT.futureboard.texts
 EVENT_COLLECTION = CLIENT.futureboard.events
 
+# FOR IMAGE SEARCHING
 GOOGLE_BASE = "https://www.google.com/search?tbm=isch&q=%s"
 
+# TWILIO
+TWILIO_CLIENT = Client(os.environ.get('TWILIO_ACCOUNT_SID'), os.environ.get('TWILIO_AUTH_TOKEN'))
 
 def gmail_to_mongo(email_data):
     """
@@ -124,16 +129,21 @@ def get_events():
 
 @app.route('/twilio', methods=["GET", "POST"])
 def twilio_text():
+    if request.form.get('From', '') not in TEXT_COLLECTION.distinct("from"):
+        TWILIO_CLIENT.messages.create(
+            to=request.form.get('From', ''),
+            from_="+15759151324",
+            body="WELCOME TO FUTUREBOARD\n\nThanks for the text! To use FUTUREBOARD, write me words or feed me a link (I'll read anything from Youtube, Vimeo or URLs that end in .jpg, .png, and of course .gif).\n\nGot some feedback? Text 2149189642 instead :)")
     data = request.form.get('Body', '')
     date = datetime.now()
-    print("\n\n", request.form.get('MediaUrl'))
     src_id = TEXT_COLLECTION.insert({
         'from': request.form.get('From', ''),
         'data': data,
         'date': date})
     identify_events(data, src_id, date, "texts")
     socketio.emit('response',
-                  {'data': request.form.get('Body', request.form.values())},
+                  {'data': request.form.get('Body', request.form.values()),
+                   'date': {'$date': date}},  # Mimicing Mongo return format
                   namespace='/text')
     return json.dumps(request.form.get('Body'))
 
@@ -176,16 +186,6 @@ def filter_emails():
         text = re.sub(re.compile("[^a-zA-Z0-9 /:]*"), "", email['text'])
         subj_date = cal.parseDT(email["subject"], date)
         body_date = cal.parseDT(text, date)
-        print(subject)
-        print(date)
-        print(subj_date)
-        print(body_date)
-        if body_date[1] == 3:
-            print(text)
-        print("")
-        # dates.append((email, ))
-    # dates = [(email, cal.parseDT(email["subject"], email["date"])) for email in emails]
-    # pp.pprint([(email[0]['subject'], email[1]) for email in dates])
     return json.dumps([email[0] for email in dates], default=json_util.default)
 
 

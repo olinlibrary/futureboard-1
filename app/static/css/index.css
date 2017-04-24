@@ -8,6 +8,31 @@ h1#number {
 	z-index: 1000;
 }
 
+input#date {
+	position: absolute;
+	bottom: 20px;
+	width: 90%;
+	left: 5%;
+	z-index: 1001;
+}
+
+ul#events {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+}
+	ul#events li {
+		list-style: none;
+		padding: 10px;
+		margin-bottom: 10px;
+		background: white;
+		max-width: 200px;
+		max-height: 150px;
+		border: 1px solid #9D62CB;
+		border-top: 20px solid #9D62CB;
+		overflow-x: scroll;
+	}
+
 
 .top {
 	background-image: url('/static/images/blue-lines.png');
@@ -74,7 +99,9 @@ ul.options {
 				max-width: 100%;
 			}
 		#results ul li.text {
-			max-width: 150px;
+			max-width: 400px;
+			max-height: 300px;
+			overflow-y: scroll;
 			border: 1px solid royalblue;
 			border-top: 20px solid royalblue;
 		}
