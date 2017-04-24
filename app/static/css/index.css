@@ -94,6 +94,7 @@ ul.options {
 			list-style: none;
 			padding: 10px;
 			background: white;
+			cursor: pointer;
 		}
 			#results ul li iframe, #results ul li img {
 				max-width: 100%;
@@ -103,20 +104,20 @@ ul.options {
 			max-height: 300px;
 			overflow-y: scroll;
 			border: 1px solid royalblue;
-			border-top: 20px solid royalblue;
+			border-top: 25px solid royalblue;
 		}
 		#results ul li.video {
 			max-width: 560px;
 			max-height: 336px;
 			padding: 0px;
 			border: 1px solid #95D765;
-			border-top: 20px solid #95D765;
+			border-top: 25px solid #95D765;
 		}
 		#results ul li.image {
 			padding: 0px;
 			max-width: 400px;
 			border: 1px solid #D06269;
-			border-top: 20px solid #D06269;
+			border-top: 25px solid #D06269;
 		}
 
 			#results ul li p {

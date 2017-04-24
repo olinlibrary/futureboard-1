@@ -140,10 +140,11 @@ def twilio_text():
         'from': request.form.get('From', ''),
         'data': data,
         'date': date})
-    identify_events(data, src_id, date, "texts")
+    is_event = identify_events(data, src_id, date, "texts")
     socketio.emit('response',
                   {'data': request.form.get('Body', request.form.values()),
-                   'date': {'$date': date}},  # Mimicing Mongo return format
+                   'date': {'$date': date.isoformat() + 'Z'},  # Mimicing Mongo return format
+                   'event': is_event},
                   namespace='/text')
     return json.dumps(request.form.get('Body'))
 

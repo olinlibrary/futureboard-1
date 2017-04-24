@@ -33,7 +33,8 @@ function getRandomPosition(type) {
 function placeTile(msg) {
   var type = getType(msg);
   var randomPos = getRandomPosition(type);
-  var $li = $('<li id="'+ msg.date.$date.toString() +'" class="'+type+'" style="top:'+randomPos.top+';left:'+randomPos.left+';"></li>')
+  var date = new Date(msg.date.$date);
+  var $li = $('<li id="'+ date.toString() +'" class="'+type+'" style="top:'+randomPos.top+';left:'+randomPos.left+';"></li>')
 
   switch (type) {
     case 'text':
@@ -59,7 +60,7 @@ function placeTile(msg) {
   }
 
   $('#results ul').append($li);
-  $('#' + msg.date.$date.toString()).draggable();
+  $('#' + new Date(msg.date.$date).toString()).draggable();
 }
 
 function changeDate(day) {
