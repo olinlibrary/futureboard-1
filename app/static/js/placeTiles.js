@@ -34,7 +34,7 @@ function placeTile(msg) {
   var type = getType(msg);
   var randomPos = getRandomPosition(type);
   var date = new Date(msg.date.$date);
-  var $li = $('<li id="'+ date.toString() +'" class="'+type+'" style="top:'+randomPos.top+';left:'+randomPos.left+';"></li>')
+  var $li = $('<li id="'+ date.getTime() +'" class="'+type+'" style="top:'+randomPos.top+';left:'+randomPos.left+';"></li>')
 
   switch (type) {
     case 'text':
@@ -60,7 +60,7 @@ function placeTile(msg) {
   }
 
   $('#results ul').append($li);
-  $('#' + new Date(msg.date.$date).toString()).draggable();
+  $('#' + new Date(msg.date.$date).getTime()).draggable();
 }
 
 function changeDate(day) {
@@ -90,7 +90,13 @@ $(document).ready(function(){
     'width': $('#number').width() + 30,  // Margin is 20, plus 10 padding
     'height': $('#number').height() + 40 // Margin is 30, plus 10 padding
   }]
-  socket.on('response', placeTile);
+  socket.on('response', function(post) {
+    if (post.event) {
+      placeEvent(post);
+    } else {
+      placeTile(post);
+    }
+  });
 
   $('#number').click(function() {
     $('#date').val(0);
@@ -100,14 +106,14 @@ $(document).ready(function(){
   var start = new Date(),
     end = new Date();
   end.setDate(end.getDate() + 2);
-  start.setDate(end.getDate() - 1);
+  start.setDate(start.getDate() - 1);
   $.get('/events?start=' + start.toString() + '&end=' + end.toString(), function(eventList) {
     eventList = JSON.parse(eventList);
     for (var i=0; i<eventList.length; i++) placeEvent(eventList[i]);
   });
 
   end.setDate(end.getDate() - 1);
-  start.setDate(end.getDate() - 6);
+  start.setDate(start.getDate() - 6);
   $.get('/texts?start=' + start.toString() + '&end=' + end.toString(), function(texts) {
     texts = JSON.parse(texts);
     for (var i=0; i<texts.length; i++) placeTile(texts[i]);
