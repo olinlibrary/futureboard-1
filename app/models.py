@@ -1,13 +1,17 @@
 
 from datetime import datetime
-import parsedatetime as pdt
+import sys
 import json
 import os
 import re
 
+import parsedatetime as pdt
 from pymongo import MongoClient
 
-CLIENT = MongoClient(os.environ.get('MONGODB_URI', ''))
+MONGO_URI = os.environ.get('MONGODB_URI')
+if not MONGO_URI:
+    sys.exit("\nMONGODB_URI environment variable not set, see https://docs.mongodb.com/manual/reference/connection-string/\n")
+CLIENT = MongoClient()
 EMAIL_COLLECTION = CLIENT['futureboard']['emails']
 EVENT_COLLECTION = CLIENT['futureboard']['events']
 
@@ -15,6 +19,7 @@ EVENT_COLLECTION = CLIENT['futureboard']['events']
 DEL_CHARS = ''.join(c for c in map(chr, range(256)) if not c.isalnum())
 DATE_FORMATS = ['%a %b %d %X %Y', '%a, %d %b %Y %X', '%d %b %Y %X']
 cal = pdt.Calendar()
+
 
 def read_emails(fpath):
     """Fetches a particular month from parsed_data and returns it as a JSON

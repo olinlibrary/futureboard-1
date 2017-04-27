@@ -1,7 +1,7 @@
 #!flask/bin/python
 import unittest
 
-from server import app
+from app.server import app
 from fetch_emails import get_credentials
 
 
