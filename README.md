@@ -2,6 +2,7 @@
 A simple, interactive way to surface a community’s culture.
 [Play with it here](http://futureboard.herokuapp.com/)
 
+![A snapshot of the future](https://github.com/aidankmcl/futureboard/blob/master/screenshots/futureboard.png)
 <Add a bunch of cool pictures here>
 
 ### Table of Contents
@@ -44,6 +45,12 @@ To-Do list
 ### Commit
 
 ## Operating
+This project was developed on [Heroku](https://heroku.com) using a Mongo database hosted by [mLab](https://mlab.com/). The texting interface was implemented using [Twilio](https://www.twilio.com/), so if you'd like to run your own version of the site, you'll need to make an account with each of these services (except mLab if you create a mongo instance through Heroku). As a heads up, Twilio costs $1 per phone number and $0.0075 per SMS sent or received, for MMS it's $0.01 to receive and $0.02 to send.
+
+<How to deploy to the cloud. What resources to provision and how to configure them. Does this app depends on third-party services? How are these configured and how is the app configured to point to them?>
+
+<Runbook. How to perform different administrative tasks. What kinds of maintenance have you needed to do? What are some failure modes, and where to look / what to change when these occur?>
+
 
 ## Directory Structure
 
