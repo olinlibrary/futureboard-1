@@ -2,6 +2,8 @@
 A simple, interactive way to surface a community’s culture.
 [Play with it here](http://futureboard.herokuapp.com/)
 
+![A snapshot of the future](https://github.com/aidankmcl/futureboard/blob/master/screenshots/futureboard.png)
+
 <Add a bunch of cool pictures here>
 
 ### Table of Contents
