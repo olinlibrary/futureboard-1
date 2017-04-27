@@ -1,7 +1,11 @@
 # FUTUREBOARD ![build](https://travis-ci.org/aidankmcl/carpe-learning.svg?branch=master)
 A simple, interactive way to surface a community’s culture.
+[Play with it here](http://futureboard.herokuapp.com/)
 
-## Installing
+### Uses
+
+## Contributing
+### Install
 
 To install, start with `pip install -r requirements.txt` (virtual environment recommended).
 In order to see any data, you'll need an Olin email and a subscription to the CarpeDiem mailing list. Once you've signed up, follow the instructions in the `scrape.js` file:
@@ -16,3 +20,13 @@ get it reset.
 ```
 
 After that, run `python wrangle.py` which will do a rough parse of all the scraped data and make it accessible to the web app. Then you're ready to go! Just run `python server.py` and visit `localhost:5000`.
+
+### Edit
+Directory map
+Style guide
+To-Do list
+
+### Build
+
+
+### Commit
