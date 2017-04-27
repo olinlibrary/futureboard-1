@@ -5,12 +5,17 @@ A simple, interactive way to surface a community’s culture.
 <Add a bunch of cool pictures here>
 
 ### Table of Contents
-      * [Contributing](#contributing)
-         * [Install](#install)
+            * [Contributing](#contributing)
+         * [Setup](#setup)
          * [Edit](#edit)
          * [Build](#build)
          * [Commit](#commit)
-      * [Operate](#operate)
+      * [Operating](#operating)
+      * [Directory Structure](#directory-structure)
+         * [Scraping](#scraping)
+         * [Server](#server)
+         * [Styling](#styling)
+
 
 ## Contributing
 ### Setup
