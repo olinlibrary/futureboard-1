@@ -21,7 +21,7 @@ A simple, interactive way to surface a community’s culture.
 ## Contributing
 ### Setup
 
-To install, start with `pip install -r requirements.txt` (virtual environment recommended).
+To install, fork the repo and then run `pip install -r requirements.txt` (virtual environment recommended).
 In order to see any data, you'll need an Olin email and a subscription to the CarpeDiem mailing list. Once you've signed up, follow the instructions in the `scrape.js` file:
 ```
 To use, install casperjs (npm install -g casperjs) and run:
@@ -36,13 +36,18 @@ get it reset.
 After that, run `python wrangle.py` which will do a rough parse of all the scraped data and make it accessible to the web app. Finally, run `models.py` to add the parsed emails to the remote database your app will use. Note that `models.py` resets the database; see the [operators section](#operating) for information on database setup.
 
 ### Edit
-Directory map
-Style guide
-To-Do list
+[Directory Structure](#directory-structure) provides a roadmap to the modules and their functions. Once you are familiar with the layout, check out the [to-do list](#to-do), and then do some coding!
 
 ### Build
 
+
 ### Commit
+Submit a pull request detailing what you did and why. Once the code has been reviewed, the problem will be removed from the to-do list, and your feature will be merged into master and pushed to production.
+
+### To-Do
+- Implement change log
+- Spread the gospel of FUTUREBOARD
+- Remove obsolete files and directories
 
 ## Operating
 This project was developed on [Heroku](https://heroku.com) using a Mongo database hosted by [mLab](https://mlab.com/). The texting interface was implemented using [Twilio](https://www.twilio.com/), so if you'd like to run your own version of the site, you'll need to make an account with each of these services (except mLab if you create a mongo instance through Heroku). As a heads up, Twilio costs $1 per phone number and $0.0075 per SMS sent or received, for MMS it's $0.01 to receive and $0.02 to send.
@@ -78,3 +83,6 @@ Html templates are stored in [`/app/templates`](../master/app/templates), and [`
 [`board.html`](../master/app/templates/board.html) extends `layout.html` and runs the custom scripts required to use the main board.
 
 Other templates are no longer used and should be removed in future boards.
+
+## Change Log
+To be implemented
