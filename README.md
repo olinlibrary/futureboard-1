@@ -71,4 +71,10 @@ All server files are stored in the [`/app`](../master/app) directory.
 [`factory.py`](../master/app/factory.py) sets basic configurations for the Flask app.
 
 ### Styling
+Html templates are stored in [`/app/templates`](../master/app/templates), and [`/app/static`](../master/app/static) contains the CSS, fonts, and JavaScript required to render the board.
 
+[`layout.html`](../master/app/templates/layout.html) contains styling for the whole site.
+
+[`board.html`](../master/app/templates/board.html) extends `layout.html` and runs the custom scripts required to use the main board.
+
+Other templates are no longer used and should be removed in future boards.
