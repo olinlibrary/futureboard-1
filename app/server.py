@@ -139,7 +139,7 @@ def twilio_text():
         TWILIO_CLIENT.messages.create(
             to=request.form.get('From', ''),
             from_="+15759151324",
-            body="WELCOME TO FUTUREBOARD\n\nThanks for the text! To use FUTUREBOARD, write me words or feed me a link (I'll read anything from Youtube, Vimeo or URLs that end in .jpg, .png, and of course .gif).\n\nGot some feedback? Text 2149189642 instead :)")
+            body="WELCOME TO FUTUREBOARD\n\nThanks for the text! To use FUTUREBOARD, write me words or feed me a link (I'll read anything from Youtube, Vimeo or URLs that end in .jpg, .png, and of course .gif).\n\nGot some feedback? Email aidan.mclaughlin@students.olin.edu :)")
     data = request.form.get('Body', '')
     date = datetime.now()
     src_id = TEXT_COLLECTION.insert({
