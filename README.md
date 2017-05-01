@@ -1,4 +1,4 @@
-# FUTUREBOARD ![build](https://travis-ci.org/aidankmcl/carpe-learning.svg?branch=master)
+# FUTUREBOARD ![build](https://travis-ci.org/aidankmcl/futureboard.svg?branch=master)
 A simple, interactive way to surface a community’s culture. We want to make it easy for people to share ideas and events with each other.
 [Play with it here](http://futureboard.herokuapp.com/)
 
