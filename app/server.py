@@ -1,7 +1,7 @@
 """
-A Flask server that presents a minimal browsable interface for the Olin course catalog.
+A Flask server that presents a digital bulletin board
 
-author: Oliver Steele <oliver.steele@olin.edu>
+authors: Aidan McLaughlin <aidan.mclaughlin@students.olin.edu> and Sean Foley <sean.foley@students.olin.edu>
 date  : 2017-01-18
 license: MIT
 """
