@@ -16,6 +16,7 @@ A simple, interactive way to surface a community’s culture. We want to make it
 * [Contributing](#contributing)
   * [Edit](#edit)
   * [Commit](#commit)
+  * [To-do and Bugs](#to-do)
 * [Operating](#operating)
 * [Directory Structure](#directory-structure)
   * [Scraping](#scraping)
@@ -37,9 +38,10 @@ As mentioned, we currently handle some video links and common image formats.
 This project is licensed under the MIT License, a ["short and simple permissive license with conditions only requiring preservation of copyright and license notices."](https://github.com/aidankmcl/futureboard/blob/master/LICENSE)
 
 ### Future Work
-Our biggest interests right now revolve around input streams and the ability to build up content threads over time. The board does not support any native content from mobile (such as sending images or videos in MMS). It'd also be nice to include links to articles, however `iframe`s can be tricky when it comes to cross-origin content. One way around this could be scraping articles for their title and text to display here.
+The board does not support any native content from mobile (such as sending images or videos in MMS). It'd also be nice to include links to articles, however `iframe`s can be tricky when it comes to cross-origin content. One way around this could be scraping articles for their title and text to display here.
 
-As for threads, we want to explore an interface for adding information to items on the board for others to access later on. This could involve uploading links, images and videos all related to a certain event or theme.
+#### Feedback from Final Review
+Two themes of interest from the final review were location as a dimension and threads. If we use different numbers for each display, we can determine where somebody is interacting with a board which could be an interesting dimension to explore in the future. We also want to explore an interface for adding information to items on the board to create threads that others could access later. This could involve uploading links, images and videos all related to a certain event or theme. There was also interest in seeing a generally more organized representation of the information in FUTUREBOARD.
 
 ### Credits
 Thank you to Emily, Jeff and Oliver from the library along with the HtL students for all of their input over the course of this project. This project was started by Sean and Aidan but we hope to see it built upon by others in the near future :)
@@ -55,6 +57,8 @@ export MONGODB_URI="<Get this from mLab instance>";
 export TWILIO_ACCOUNT_SID="<Get this from Twilio dashboard>";
 export TWILIO_AUTH_TOKEN="<Get this from Twilio dashboard>";
 ```
+
+Once you've set these environment variables, you should be able to run the app locally by executing `python -m app.server` from the root of the repo directory. This will serve the app at [http://localhost:5000](http://localhost:5000).
 
 NOTE: You'll need to [add these as environment variables to your Heroku instance](https://devcenter.heroku.com/articles/heroku-local#set-up-your-local-environment-variables) as well. Depending on your setup, you may want to have a separate database for local vs. production, but for just getting the app running it's not a crime to use the same.
 
@@ -78,7 +82,11 @@ Submit a pull request detailing what you did and why. Once the code has been rev
 - Implement change log
 - Spread the gospel of FUTUREBOARD
 - Remove obsolete files and directories
-
+- Investigate why certain links don't render correctly
+- At one point, a bunch of records seemed to disappear. Investigate if this is a DB issue or a matter of date filtering gone wrong.
+- Address issues opened by osteele:
+    - Validate SMS Senders, messages can currently come from anybody - not just Olin community
+    - Document or automate local MongoDB for development
 
 ## Directory Structure
 
