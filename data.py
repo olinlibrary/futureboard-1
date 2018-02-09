@@ -14,7 +14,7 @@ stop_words = text.ENGLISH_STOP_WORDS.union([
 ])
 
 CLIENT = MongoClient(os.environ.get('MONGODB_URI', ''))
-EMAIL_COLLECTION = CLIENT.futureboard.emails
+EMAIL_COLLECTION = CLIENT.heroku_s2k6dn06.emails
 EMAILS = EMAIL_COLLECTION.find().limit(30000)
 DOCUMENTS = [email.get("subject", False) for email in EMAILS if not False]
 # documents = ["aidan"]

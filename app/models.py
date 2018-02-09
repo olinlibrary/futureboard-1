@@ -12,8 +12,8 @@ MONGO_URI = os.environ.get('MONGODB_URI')
 if not MONGO_URI:
     sys.exit("\nMONGODB_URI environment variable not set, see https://docs.mongodb.com/manual/reference/connection-string/\n")
 CLIENT = MongoClient()
-EMAIL_COLLECTION = CLIENT['futureboard']['emails']
-EVENT_COLLECTION = CLIENT['futureboard']['events']
+EMAIL_COLLECTION = CLIENT['heroku_s2k6dn06']['emails']
+EVENT_COLLECTION = CLIENT['heroku_s2k6dn06']['events']
 
 # Characters we don't want in our message ids
 DEL_CHARS = ''.join(c for c in map(chr, range(256)) if not c.isalnum())
@@ -51,9 +51,9 @@ def get_email_model(email_json):
 
 
 def identify_events(data, src_id, date, collection):
-    """Finds dates in the subjects of emails or texts, and creates events from those dates. Data is a string, src_id is the 
+    """Finds dates in the subjects of emails or texts, and creates events from those dates. Data is a string, src_id is the
     unique id associated with the email or text in its respective collection, and date is the datetime the email or text was sent,
-    and collection is the collection the email or text goes into 
+    and collection is the collection the email or text goes into
     """
     is_event = False
     event_date = cal.parseDT(data, date)
@@ -86,7 +86,7 @@ def add_emails(date=None):
 #     else:
 #         emails = EMAIL_COLLECTION.find()
 #         texts = TEXT_COLLECTION.find()
-    
+
 #     for email in emails:
 #         # If the subject is not in EVENTS, strip out an event and add that and the subject to EVENTS
 #         if not EVENT_COLLECTION.find({"src_id": emai['_id']}):

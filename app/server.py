@@ -37,9 +37,9 @@ MONGO_URI = os.environ.get('MONGODB_URI')
 if not MONGO_URI:
     sys.exit("\nMONGODB_URI environment variable not set, see https://docs.mongodb.com/manual/reference/connection-string/\n")
 CLIENT = MongoClient(MONGO_URI)
-EMAIL_COLLECTION = CLIENT.futureboard.emails
-TEXT_COLLECTION = CLIENT.futureboard.texts
-EVENT_COLLECTION = CLIENT.futureboard.events
+EMAIL_COLLECTION = CLIENT.heroku_s2k6dn06.emails
+TEXT_COLLECTION = CLIENT.heroku_s2k6dn06.texts
+EVENT_COLLECTION = CLIENT.heroku_s2k6dn06.events
 
 # FOR IMAGE SEARCHING
 GOOGLE_BASE = "https://www.google.com/search?tbm=isch&q=%s"
